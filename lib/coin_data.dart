@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-const apikey = '4CBFCE93-2B88-4EAA-BC9C-AB33F53C71F8';
+const apikey = '141830DD-F75B-4F05-8AFF-7198557BB925';
 const coinApiURL = 'https://rest.coinapi.io/v1/exchangerate/';
 const List<String> currenciesList = [
   'AUD',
