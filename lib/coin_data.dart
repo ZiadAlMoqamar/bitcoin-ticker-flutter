@@ -1,3 +1,9 @@
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+const apikey = '4CBFCE93-2B88-4EAA-BC9C-AB33F53C71F8';
+const coinApiURL = 'https://rest.coinapi.io/v1/exchangerate/';
 const List<String> currenciesList = [
   'AUD',
   'BRL',
@@ -28,4 +34,22 @@ const List<String> cryptoList = [
   'LTC',
 ];
 
-class CoinData {}
+class CoinData {
+  String data;
+  String choosedCurrency;
+  String cryptoCurrency;
+
+  CoinData();
+
+  Future getData({@required String currency, @required String crypto}) async {
+    http.Response response = await http.get('$coinApiURL$crypto/$currency?apikey=$apikey');
+    if(response.statusCode == 200){
+      data = response.body;
+      var decodedData = jsonDecode(data)['rate'];
+      return decodedData;
+    }
+    else{
+      print(response.statusCode);
+    }
+  }
+}

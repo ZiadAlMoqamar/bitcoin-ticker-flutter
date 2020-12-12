@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
-import 'coin_data.dart';
+
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,7 +10,12 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
+  var coindata = CoinData();
+
   Text selectedCurrency = Text('USD');
+  Text selectedCurrencyValueforBTC = Text('?');
+  Text selectedCurrencyValueforETH = Text('?');
+  Text selectedCurrencyValueforLTC = Text('?');
 
   List<DropdownMenuItem> getDropdownItems() {
     List<DropdownMenuItem<String>> itemsList = [];
@@ -23,7 +28,23 @@ class _PriceScreenState extends State<PriceScreen> {
     }
     return itemsList;
   }
-
+  void updateUI({dynamic coindata, String selectedCurrency}) async{
+    List<dynamic> cryptoCoinsData =[];
+    for(String crypto in cryptoList){
+    var apiData = await coindata.getData(currency: selectedCurrency, crypto: crypto);
+    cryptoCoinsData.add(apiData);
+    }
+     setState(() {
+          var calculatedCurrency = cryptoCoinsData[0].toString();
+          selectedCurrencyValueforBTC = Text(calculatedCurrency);
+          var calculatedCurrency1 = cryptoCoinsData[1].toString();
+          selectedCurrencyValueforETH = Text(calculatedCurrency1);
+          var calculatedCurrency2 = cryptoCoinsData[2].toString();
+          selectedCurrencyValueforLTC = Text(calculatedCurrency2);
+     });
+    
+  }
+  
   DropdownButton<String> getDropDownButton() {
     return DropdownButton<String>(
       value: selectedCurrency.data,
@@ -31,6 +52,7 @@ class _PriceScreenState extends State<PriceScreen> {
       onChanged: (value) {
         setState(() {
           selectedCurrency = Text(value);
+          updateUI(coindata: coindata,selectedCurrency: value);
         });
       },
     );
@@ -67,18 +89,8 @@ class _PriceScreenState extends State<PriceScreen> {
       return getDropDownButton();
     }
   }
-  @override
-  Widget build(BuildContext context) {
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('🤑 Coin Ticker'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Padding(
+  Padding getCryptoCoinPadding({String crypto, String currencyValue}){
+    return Padding(
             padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
             child: Card(
               color: Colors.lightBlueAccent,
@@ -89,7 +101,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? ${selectedCurrency.data}',
+                  '1 $crypto = $currencyValue ${selectedCurrency.data}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -98,15 +110,33 @@ class _PriceScreenState extends State<PriceScreen> {
                 ),
               ),
             ),
-          ),
-          Container(
-            height: 150.0,
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightBlue,
-            child: getPicker()
-          ),
-        ],
+          );
+  }
+  @override
+  Widget build(BuildContext context) {
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('🤑 Coin Ticker'),
+      ),
+      body: SafeArea(
+              child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            getCryptoCoinPadding(crypto: 'BTC',currencyValue: selectedCurrencyValueforBTC.data),
+            getCryptoCoinPadding(crypto: 'ETH',currencyValue: selectedCurrencyValueforETH.data),
+            getCryptoCoinPadding(crypto: 'LTC',currencyValue: selectedCurrencyValueforLTC.data),
+            SizedBox(height: 210,),
+            Container(
+              height: 150,
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(bottom: 30.0),
+              color: Colors.lightBlue,
+              child: getPicker()
+            ),
+          ],
+        ),
       ),
     );
   }
