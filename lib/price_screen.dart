@@ -34,6 +34,7 @@ class _PriceScreenState extends State<PriceScreen> {
     var apiData = await coindata.getData(currency: selectedCurrency, crypto: crypto);
     cryptoCoinsData.add(apiData);
     }
+    
      setState(() {
           var calculatedCurrency = cryptoCoinsData[0].toString();
           selectedCurrencyValueforBTC = Text(calculatedCurrency);
@@ -127,7 +128,7 @@ class _PriceScreenState extends State<PriceScreen> {
             getCryptoCoinPadding(crypto: 'BTC',currencyValue: selectedCurrencyValueforBTC.data),
             getCryptoCoinPadding(crypto: 'ETH',currencyValue: selectedCurrencyValueforETH.data),
             getCryptoCoinPadding(crypto: 'LTC',currencyValue: selectedCurrencyValueforLTC.data),
-            SizedBox(height: 210,),
+            SizedBox(height: 180,),
             Container(
               height: 150,
               alignment: Alignment.center,
